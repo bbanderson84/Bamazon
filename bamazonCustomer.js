@@ -38,9 +38,30 @@ var connection = mysql.createConnection({
       inquirer
       .prompt([
         {
-          name: "buyItem",
+          name: "productSearch",
           type: "input",
           message: "What is the ID # of the item you would like to purchase?",
+          validate: function(value){
+              if (isNaN(value) === false) {
+                  return true;
+              }
+
+              return false;
+          }
+        },
+        {
+          name: "productQuantity",
+          type: "input",
+          message: "How many items of this product would you like to purchase?",
         }
     ])
+    .then(function(answer){
+        var query = "SELECT item_id, product_name, price FROM products";
+        connection.query(query, [answer.productSearch], function (error, response){
+            for (var i = 0; i < response.length; i++) {
+                console.log("Item ID: " + response[i].item_id + "Product Name: " + response[i].product_name + "Price: " + response[i].price);
+
+            }
+        });
+    });
 } 
