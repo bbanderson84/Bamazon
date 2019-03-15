@@ -23,6 +23,28 @@ var connection = mysql.createConnection({
       start();
   });
 
+function continueOrder() {
+    orderContinue = "";
+    inquirer
+    .prompt([
+      {
+        name: "orderContinue",
+        type: "input",
+        message: "Would you like to continue shopping? Press Y for Yes, or N for No",
+      },
+
+  ])
+  .then(function(answer){
+      if (answer.orderContinue === "Y"){
+
+      } else {
+          console.log("Thank you for shopping at Bamazon. Please check back later for needed quantity.");
+      }
+
+  });
+
+}
+
 function start() {
 var query = "SELECT item_id, product_name, price FROM products";
 connection.query(query, function(error, response) {
@@ -66,31 +88,50 @@ connection.query(query, function(error, response) {
 
                 console.log("\n--------------------------" + "\nSorry! We do not have that amount of that item in stock!" + "\n--------------------------");
 
-                start();
+                continueOrder();
 
-            } else {
+            } else { 
+                console.log("Your total is: " + response[i].price * answer.productQuantity);
+
+                var updatedStock = (response[i].stock_quantity -answer.productQuantity);
+
+                var purchaseId = answer.productSearch;
+
+                calculateOrder(updatedStock, purchaseId);
 
             }
         }
-        // var query = "SELECT item_id, stock_quantity FROM products";
-        // connection.query(query, function (error, response){
-        // var searchedItem;
-        // for (var i = 0; i < response.length; i++) {
-        //     if (response[i].item_id === answer.productSearch) {
-        //         searchedItem = response[i];
-        //         console.log(searchedItem);
-        //         }
-        //     }
-
-        // if (searchedItem.stock_quantity > parseInt(answer.productQuantity)) {
-        //         console.log("IT WORKS");
-        //         // // connection.query(
-        //         //     // "UPDATE products SET ? WHERE ?",
-
-        //         // )
-        //     }
+      
         });
 
     });
 }
-    
+
+function calculateOrder(updatedStock, purchaseId) {
+    inquirer
+    .prompt([
+        {
+        name: "checkoutCost",
+        type: "input",
+        message: "Continue to checkout? Press Y for Yes, and N for No.",
+    },
+
+    ])
+    .then(function(answer){
+        if (answer.checkoutCost === "Y"){
+            connection.query("UPDATE products SET ? WHERE ?", [{stock_quantity: updatedStock}, {item_id: purchaseId}], function (error, response){
+                console.log("\n----------------------" + "\n Thank you for your purchase! Please come again soon!" + "\n----------------------");
+
+            });  
+
+        } else {
+            console.log("No problem. Please visit Bamazon for your future product needs. See you next time!");
+
+            start();
+
+            }
+
+        });
+}
+
+
