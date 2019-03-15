@@ -17,24 +17,25 @@ var connection = mysql.createConnection({
     database: "bamazon_db"
   });
   
-  connection.connect(function(error) {
-      if (error) throw error;
+  connection.connect(function(err) {
+      if (err) throw err;
       console.log("Connected as id " + connection.threadId);
       start();
   });
 
-  function start() {
-    var query = "SELECT item_id, product_name, price FROM products";
-    connection.query(query, function(error, response) {
-        for (var i = 0; i < response.length; i++) {
-            console.log("Item Id: " + response[i].item_id + " || Product Name: " + response[i].product_name  + " || Price: " + response[i].price);
-        }
+function start() {
+var query = "SELECT item_id, product_name, price FROM products";
+connection.query(query, function(error, response) {
+    for (var i = 0; i < response.length; i++) {
+        console.log("Item Id: " + response[i].item_id + " || Product Name: " + response[i].product_name  + " || Price: " + response[i].price);
+    }
 
-        itemSearch();
+    itemSearch();
     });
   }
 
   function itemSearch() {
+        // if (err) throw err;
       inquirer
       .prompt([
         {
@@ -56,12 +57,40 @@ var connection = mysql.createConnection({
         }
     ])
     .then(function(answer){
-        var query = "SELECT item_id, product_name, price FROM products";
-        connection.query(query, [answer.productSearch], function (error, response){
-            for (var i = 0; i < response.length; i++) {
-                console.log("Item ID: " + response[i].item_id + "Product Name: " + response[i].product_name + "Price: " + response[i].price);
+
+        connection.query("SELECT * FROM products where item_id=?", answer.productSearch, function (error, response){
+
+        for (var i = 0; i < response.length; i++){
+
+            if (answer.productQuantity > response[i].stock_quantity){
+
+                console.log("\n--------------------------" + "\nSorry! We do not have that amount of that item in stock!" + "\n--------------------------");
+
+                start();
+
+            } else {
 
             }
+        }
+        // var query = "SELECT item_id, stock_quantity FROM products";
+        // connection.query(query, function (error, response){
+        // var searchedItem;
+        // for (var i = 0; i < response.length; i++) {
+        //     if (response[i].item_id === answer.productSearch) {
+        //         searchedItem = response[i];
+        //         console.log(searchedItem);
+        //         }
+        //     }
+
+        // if (searchedItem.stock_quantity > parseInt(answer.productQuantity)) {
+        //         console.log("IT WORKS");
+        //         // // connection.query(
+        //         //     // "UPDATE products SET ? WHERE ?",
+
+        //         // )
+        //     }
         });
+
     });
-} 
+}
+    
