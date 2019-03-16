@@ -19,7 +19,8 @@ var connection = mysql.createConnection({
   
   connection.connect(function(err) {
       if (err) throw err;
-      console.log("Connected as id " + connection.threadId);
+      console.log("Connected as id " + connection.threadId + "\n------------------------");
+
       start();
   });
 
@@ -36,9 +37,10 @@ function continueOrder() {
   ])
   .then(function(answer){
       if (answer.orderContinue === "Y"){
+          start();
 
       } else {
-          console.log("Thank you for shopping at Bamazon. Please check back later for needed quantity.");
+          console.log("Thank you for shopping at Bamazon. Please check back later for needed quantity." + "\n------------------------");
       }
 
   });
@@ -46,7 +48,11 @@ function continueOrder() {
 }
 
 function start() {
+
 var query = "SELECT item_id, product_name, price FROM products";
+
+console.log("Welcome to Bamazon! Please browse our items in the list below. " + "\n------------------------" );
+
 connection.query(query, function(error, response) {
     for (var i = 0; i < response.length; i++) {
         console.log("Item Id: " + response[i].item_id + " || Product Name: " + response[i].product_name  + " || Price: " + response[i].price);
