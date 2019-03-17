@@ -12,8 +12,8 @@ var connection = mysql.createConnection({
     // Your username
     user: "root",
   
-    // Your password
-    password: "Spartan1026!",
+    // Your password and username
+    password: "",
     database: "bamazon_db"
   });
   
@@ -24,6 +24,7 @@ var connection = mysql.createConnection({
       start();
   });
 
+  // function that prompts user if they would like to continue with order
 function continueOrder() {
     orderContinue = "";
     inquirer
@@ -47,6 +48,7 @@ function continueOrder() {
 
 }
 
+// start app function providing user with list of products
 function start() {
 
 var query = "SELECT item_id, product_name, price FROM products";
@@ -62,6 +64,7 @@ connection.query(query, function(error, response) {
     });
   }
 
+  // item search function that takes in ID of product and quantity that user wants
   function itemSearch() {
         // if (err) throw err;
       inquirer
@@ -112,7 +115,7 @@ connection.query(query, function(error, response) {
 
     });
 }
-
+// function that calculates the user order based on the product and anount that they have selected
 function calculateOrder(updatedStock, purchaseId) {
     inquirer
     .prompt([
