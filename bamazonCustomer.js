@@ -115,7 +115,7 @@ connection.query(query, function(error, response) {
 
     });
 }
-// function that calculates the user order based on the product and anount that they have selected
+// function that calculates the user order based on the product and amount that they have selected
 function calculateOrder(updatedStock, purchaseId) {
     inquirer
     .prompt([
